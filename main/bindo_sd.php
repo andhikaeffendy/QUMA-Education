@@ -1,5 +1,6 @@
 <?php
     include("koneksi.php");
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -186,9 +187,12 @@
                         <img src="img/Quiz-Time.png" alt="About Us" class="img-responsive">
                     </div>
                     <br>
+                    <br>
+                    <br>
                     <p>bacaan soal nomor 1-4</p>
                     <br>
                     <h3><center>Olahraga Pagi</center></h3>
+                    <br>
                     <br>
                     <p> Udara yang sejuk dan segar akan kita temukan di pagi hari. Pada pagi hari belum kita temui
 pencemaran udara yang diakibatkan oleh kendaraan bermotor, asap pabrik, dan debu. Oleh sebab
@@ -290,7 +294,8 @@ if(isset($_GET['pilihan'])) {
 	
 		if(substr($b, 0, 1) == $pertanyaan[$a]['jawaban']) 
 			$total++;
-            $query = "INSERT INTO skor(id_skor, skor) VALUES ('','$total')";
+            $user_quiz = $_SESSION['user'];
+            $query = "INSERT INTO skor(id_skor, username, mata_pelajaran, skor) VALUES ('','$user_quiz','Bahasa Indonesia SD','$total')";
             mysqli_query($konek, $query);
 			echo "
 				<script type='text/javascript'>
@@ -403,16 +408,21 @@ if(isset($_GET['hSkor']) == 'Hitung Skor') {
   <table align="center" >
     <tr>
     	<td>ID</td>
+        <td>Nama User</td>
+    	<td>Nama Matkul</td>
         <td>Skor</td>
     </tr>
 	<?php
 	$id=0; 
-	$queryviewskor = mysqli_query($konek, "select * from skor");
+    $us = $_SESSION['user'];
+	$queryviewskor = mysqli_query($konek, "select * from skor where username='$us'");
 	
 	while($row = mysqli_fetch_array($queryviewskor)){
 		?>
 	  <tr>
 		  <td><span class="style1"><?php echo $id=$id+1; ?></span></td>
+		  <td><span class="style1"><?php echo $row['username'];?></span></td>
+          <td><span class="style1"><?php echo $row['mata_pelajaran'];?></span></td>
           <td><span class="style1"><?php echo $row['skor'];?></span></td>
 	  </tr>
 	  <?php	

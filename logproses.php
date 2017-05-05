@@ -9,7 +9,6 @@ if(isset($lemparpostnya) && $lemparpostnya){
 	$num = mysql_num_rows($ngecek);
 	$num1 = mysql_fetch_array($ngecek);
 	if($num==1){
-		$_SESSION['level'] = $num1['level'];
 		$_SESSION['user'] = $username;
 		$_SESSION['passwd'] = $password;
 		echo "success";

@@ -1,5 +1,6 @@
 <?php
     include("koneksi.php");
+	session_start();
 ?>
 
 <!DOCTYPE html>
@@ -611,7 +612,7 @@
                         </div>
 
                         <div class="copyright">
-                            <p>Developed by <a target="_blank" href="#">D3 Informatics Engineering</a></p>
+                            <p>Developed by <a target="_blank" href="#">Bold Programming</a></p>
                         </div>
 
                     </div>

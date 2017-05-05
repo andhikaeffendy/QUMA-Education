@@ -1,6 +1,6 @@
 <?php
     include("koneksi.php");
-
+    session_start();
 ?>
 
 <!DOCTYPE html>
@@ -9,6 +9,15 @@
 <!--[if IE 8]>         <html lang="en" class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
     <head>
+        <style>
+            table, th, td {
+                border: 2px solid black;
+            }
+            
+            td {
+                padding: 20px;
+            }
+        </style>
         <!-- Mobile Specific Meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Always force latest IE rendering engine -->
@@ -292,67 +301,15 @@ if(isset($_GET['pilihan'])) {
 	
 		if(substr($b, 0, 1) == $pertanyaan[$a]['jawaban']) 
 			$total++;
-			echo "
-				<script type='text/javascript'>
-					alert('Skor anda : ".$total."');
-					var jwb = confirm('ingin main lagi.?');
-					if(jwb) {
-						window.location ='bindo_sma.php';
-					} else {
-						window.location ='index.php';
-					}
-				</script>
-			";	
-}
-$no = 1;
-$layout = '
-	<div>
-		<div><br>%s. %s</div>
-		<div>%s</div>
-	</div>
-';
-?>
-
-<form>
-
-	<?php
-
-
-	foreach($pertanyaan as $key => $value) 
-	{	
-		$pilihan = explode('|', $value['pilihan']);
-		$radio = "";
-		foreach($pilihan as $h => $i)
-		{
-			$radio .= '<label><input type="radio" value="'.$i.'" name="pilihan['.$key.']">'.$i. '</label><br>';
-		}
-
-		printf($layout, $no++, $value['soal'], $radio);
-
-	}
-
-	?>
-	<br><br><br>
-<input type="submit" value="Jawab" name="hSkor">
-</form>
-
-<?php 
-
-if(isset($_GET['pilihan'])) {
-	$total = 0;
-
-	foreach($_GET['pilihan'] as $a => $b) 
-	
-		if(substr($b, 0, 1) == $pertanyaan[$a]['jawaban']) 
-			$total++;
-            $query = "INSERT INTO skor(id_skor, skor) VALUES ('','$total')";
+            $user_quiz = $_SESSION['user'];
+            $query = "INSERT INTO skor(id_skor, username, mata_pelajaran, skor) VALUES ('','$user_quiz','Bahasa Indonesia SMA','$total')";
             mysqli_query($konek, $query);
 			echo "
 				<script type='text/javascript'>
 					alert('Skor anda : ".$total."');
 					var jwb = confirm('Ulangi Quiz?');
 					if(jwb) {
-						window.location ='bindo_sd.php';
+						window.location ='bindo_sma.php';
 					} else {
 						window.location ='index.php';
 					}
@@ -458,16 +415,21 @@ if(isset($_GET['hSkor']) == 'Hitung Skor') {
   <table align="center" >
     <tr>
     	<td>ID</td>
+        <td>Nama User</td>
+    	<td>Nama Matkul</td>
         <td>Skor</td>
     </tr>
 	<?php
 	$id=0; 
-	$queryviewskor = mysqli_query($konek, "select * from skor");
+    $us = $_SESSION['user'];
+	$queryviewskor = mysqli_query($konek, "select * from skor where username='$us'");
 	
 	while($row = mysqli_fetch_array($queryviewskor)){
 		?>
 	  <tr>
 		  <td><span class="style1"><?php echo $id=$id+1; ?></span></td>
+		  <td><span class="style1"><?php echo $row['username'];?></span></td>
+          <td><span class="style1"><?php echo $row['mata_pelajaran'];?></span></td>
           <td><span class="style1"><?php echo $row['skor'];?></span></td>
 	  </tr>
 	  <?php	

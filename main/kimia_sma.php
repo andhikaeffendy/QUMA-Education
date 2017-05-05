@@ -1,12 +1,6 @@
 <?php
-$host="localhost";
-$user="root";
-$password="";
-$database="db_ujianonline";
-
-$koneksi=mysql_connect($host,$user,$password);
-mysql_select_db($database,$koneksi);
-
+    include("koneksi.php");
+    session_start();
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +9,15 @@ mysql_select_db($database,$koneksi);
 <!--[if IE 8]>         <html lang="en" class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
     <head>
+        <style>
+            table, th, td {
+                border: 2px solid black;
+            }
+            
+            td {
+                padding: 20px;
+            }
+        </style>
         <!-- Mobile Specific Meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Always force latest IE rendering engine -->
@@ -87,7 +90,7 @@ mysql_select_db($database,$koneksi);
                     <!-- main nav -->
                     <nav class="collapse navigation navbar-collapse navbar-right" role="navigation">
                         <ul id="nav" class="nav navbar-nav">
-                            <li class="current"><a href="index.html">Home</a></li>
+                            <li class="current"><a href="index.php">Home</a></li>
                             <li><a href="#about">Quiz</a></li>
                             <li><a href="#contact">Skor</a></li>
                         </ul>
@@ -216,14 +219,17 @@ if(isset($_GET['pilihan'])) {
 	
 		if(substr($b, 0, 1) == $pertanyaan[$a]['jawaban']) 
 			$total++;
+            $user_quiz = $_SESSION['user'];
+            $query = "INSERT INTO skor(id_skor, username, mata_pelajaran, skor) VALUES ('','$user_quiz','Kimia SMA','$total')";
+            mysqli_query($konek, $query);
 			echo "
 				<script type='text/javascript'>
 					alert('Skor anda : ".$total."');
-					var jwb = confirm('ingin main lagi.?');
+					var jwb = confirm('Ulangi Quiz?');
 					if(jwb) {
-						window.location ='Home.php';
+						window.location ='kimia_sma.php';
 					} else {
-						window.location ='index.html';
+						window.location ='index.php';
 					}
 				</script>
 			";	
@@ -324,28 +330,25 @@ if(isset($_GET['hSkor']) == 'Hitung Skor') {
                         <h2>Skor</h2>
                         <p>Final Skor.</p>
                         <p>
-  <table class="datatable">
+  <table align="center" >
     <tr>
-    	<td>No</td>
-        <td>Benar</td>
-        <td>Salah</td>
-        <td>Kosong</td>
+    	<td>ID</td>
+        <td>Nama User</td>
+    	<td>Nama Matkul</td>
         <td>Skor</td>
-        <td>Tanggal</td>
     </tr>
 	<?php
-	$no=0; 
-	$query=mysql_query("select * from tabel_nilai");
+	$id=0; 
+    $us = $_SESSION['user'];
+	$queryviewskor = mysqli_query($konek, "select * from skor where username='$us'");
 	
-	while($row=mysql_fetch_array($query)){
+	while($row = mysqli_fetch_array($queryviewskor)){
 		?>
 	  <tr>
-		  <td><span class="style1"><?php echo $no=$no+1; ?></span></td>
-		  <td><span class="style1"><?php echo $row['benar'];?></span></td>
-		  <td><span class="style1"><?php echo $row['salah'];?></span></td>
-          <td><span class="style1"><?php echo $row['kosong'];?></span></td>
-          <td><span class="style1"><?php echo $row['point'];?></span></td>
-          <td><span class="style1"><?php echo $row['tanggal'];?></span></td>
+		  <td><span class="style1"><?php echo $id=$id+1; ?></span></td>
+		  <td><span class="style1"><?php echo $row['username'];?></span></td>
+          <td><span class="style1"><?php echo $row['mata_pelajaran'];?></span></td>
+          <td><span class="style1"><?php echo $row['skor'];?></span></td>
 	  </tr>
 	  <?php	
 	}
